@@ -41,6 +41,12 @@
         0 0 90px rgba(0, 255, 0, 0.1),
         0 0 120px rgba(0, 0, 255, 0.1);
     animation: rgbBoxShadow 10s ease infinite;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 
 @keyframes rgbBoxShadow {
