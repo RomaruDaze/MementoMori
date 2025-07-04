@@ -70,6 +70,12 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     border-radius: var(--border-radius);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 
 .create-button::after {
@@ -98,11 +104,7 @@
     mask-composite: exclude;
     -webkit-mask-composite: destination-out;
     filter: hue-rotate(0);
-    animation: rotate-hue linear 2000ms infinite;
-    animation-play-state: running;
-}
-
-.create-button:hover::after {
+    animation: rotate-hue linear 500ms infinite;
     animation-play-state: paused;
 }
 
@@ -123,8 +125,11 @@
 
 .create-button:hover {
     transform: translateY(-3px);
-    transform: scale(1.05);
     background: #111111;
+}
+
+.create-button:focus {
+    outline: none;
 }
 
 /* Responsive design */
