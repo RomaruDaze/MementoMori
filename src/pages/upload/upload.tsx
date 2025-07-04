@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./upload.styles.css";
 
 interface UploadPageProps {
@@ -8,6 +8,8 @@ interface UploadPageProps {
 
 const UploadPage: React.FC<UploadPageProps> = ({ onClose, isOpen }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -15,7 +17,7 @@ const UploadPage: React.FC<UploadPageProps> = ({ onClose, isOpen }) => {
     } else {
       const timer = setTimeout(() => {
         setIsVisible(false);
-      }, 300); // Match the CSS transition duration
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -26,12 +28,23 @@ const UploadPage: React.FC<UploadPageProps> = ({ onClose, isOpen }) => {
     }
   };
 
-  const handleCameraClick = () => {
-    console.log("Camera button clicked");
+  const handleUploadAreaClick = () => {
+    fileInputRef.current?.click();
   };
 
-  const handlePhotoClick = () => {
-    console.log("Photo button clicked");
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleTakePhoto = () => {
+    console.log("Take photo button clicked");
   };
 
   if (!isVisible) return null;
@@ -46,25 +59,45 @@ const UploadPage: React.FC<UploadPageProps> = ({ onClose, isOpen }) => {
           <h2>Upload Memory</h2>
         </div>
         <div className="upload-body">
-          <div className="upload-buttons">
-            <button
-              className="upload-btn camera-btn"
-              onClick={handleCameraClick}
-            >
-              <img
-                src="https://img.icons8.com/sf-regular-filled/100/FFFFFF/camera.png"
-                alt="Camera"
-              />
-            </button>
-            <button className="upload-btn photo-btn" onClick={handlePhotoClick}>
-              <img
-                src="https://img.icons8.com/material-rounded/100/FFFFFF/stack-of-photos.png"
-                alt="Photo"
-              />
-            </button>
+          <div className="upload-area" onClick={handleUploadAreaClick}>
+            {selectedImage ? (
+              <div className="image-preview">
+                <img src={selectedImage} alt="Selected" />
+                <button
+                  className="change-image-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImage(null);
+                  }}
+                >
+                  Change Image
+                </button>
+              </div>
+            ) : (
+              <div className="upload-placeholder">
+                <div className="upload-icon">📁</div>
+                <p>Click to upload image</p>
+              </div>
+            )}
           </div>
+
+          <button className="take-photo-btn" onClick={handleTakePhoto}>
+            <img
+              src="https://img.icons8.com/sf-regular-filled/100/FFFFFF/camera.png"
+              alt="camera"
+            />
+            <h3>Take Photo</h3>
+          </button>
         </div>
       </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileUpload}
+        style={{ display: "none" }}
+      />
     </div>
   );
 };
